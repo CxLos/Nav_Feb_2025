@@ -898,13 +898,17 @@ person_pie=px.pie(
 
 # ---------------------- Zip 2 --------------------- #
 
+
+
 # make a copy of 'ZIP Code:' column to 'ZIP2':
 df['ZIP2'] = df['ZIP Code:']
+zip2_mode = df['ZIP2'].mode()[0]
 df['ZIP2'] = df['ZIP2'].astype(str).str.strip()
-df['ZIP2'] = df['ZIP2'].fillna(df['ZIP2'].mode()[0])
-df['ZIP2'] = df['ZIP2'].replace('UNHOUSED', df['ZIP Code:'].mode()[0])
-df['ZIP2'] = df['ZIP2'].replace('Texas', df['ZIP Code:'].mode()[0])
-df['ZIP2'] = df['ZIP2'].replace('nan', df['ZIP Code:'].mode()[0])
+df['ZIP2'] = df['ZIP2'].fillna(zip2_mode)
+df['ZIP2'] = df['ZIP2'].replace('UNHOUSED', zip2_mode)
+df['ZIP2'] = df['ZIP2'].replace('Unhoused', zip2_mode)
+df['ZIP2'] = df['ZIP2'].replace('Texas', zip2_mode)
+df['ZIP2'] = df['ZIP2'].replace('nan', zip2_mode)
 df['ZIP2'] = df['ZIP2'].astype(str)
 df_z = df['ZIP2'].value_counts().reset_index(name='Count')
 # print(df_z.value_counts())
