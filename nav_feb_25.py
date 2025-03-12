@@ -553,16 +553,46 @@ insurance_pie=px.pie(
 
 # ------------------------------ Location Encountered --------------------------------- #
 
-# # "Location Encountered:" dataframe:
-df['Location Encountered:'] = df['Location Encountered:'].str.strip()
-df['Location Encountered:'] = df['Location Encountered:'].replace('Southbridge', 'SouthBridge')
-df['Location Encountered:'] = df['Location Encountered:'].replace('DACC', 'Downtown Austin Community Court')
-df['Location Encountered:'] = df['Location Encountered:'].replace('SNHC', 'Sunrise Navigation Homeless Center')
-df['Location Encountered:'] = df['Location Encountered:'].replace('HATC', 'Housing Authority of Travis County')
-df['Location Encountered:'] = df['Location Encountered:'].replace('CFV', 'Community First Village')
-df['Location Encountered:'] = df['Location Encountered:'].replace('BMHC', 'Black Men\'s Health Clinic')
+# Uniqu Values:
+
+Locations = [
+    "Black Men's Health Clinic" 
+    'Downtown Austin Community Court'
+    'The Bumgalows'
+    'Extended Stay America (Host Hotel)'
+    'The Bungalows'
+    'last known area was St. John. Connected with Hungry Hill to help me search for client'
+    'Office (remote)'
+    'GudLife' 
+    'PHONE CONTACT' 
+    'PHONE'
+]
+
+df['Location Encountered:'] = (
+    df['Location Encountered:']
+    .str.strip()
+    .replace(
+        {
+        'Southbridge': 'SouthBridge',
+        'DACC': 'Downtown Austin Community Court',
+        'SNHC': 'Sunrise Navigation Homeless Center',
+        'HATC': 'Housing Authority of Travis County',
+        'CFV': 'Community First Village',
+        'BMHC': "Black Men's Health Clinic",
+        "The Bumgalows" : "The Bungalows",
+        "PHONE CONTACT" : "Phone Call",
+        "PHONE" : "Phone Call",
+        "last known area was St. John. Connected with Hungry Hill to help me search for client" : "Client Missing",
+        }
+    )
+)
+
+
 df_location = df['Location Encountered:'].value_counts().reset_index(name='Count')
 # # print(df['Location Encountered:'].value_counts())
+
+# unique values
+print("Locations Encountered",df['Location Encountered:'].unique())
 
 # Location Bar Chart
 location_bar=px.bar(
@@ -628,6 +658,7 @@ location_pie=px.pie(
     names="Location Encountered:",
     values='Count'
 ).update_layout(
+    height=500,
     title='Location Encountered Pie Chart',
     title_x=0.5,
     font=dict(
@@ -636,8 +667,8 @@ location_pie=px.pie(
         color='black'
     )
 ).update_traces(
-    rotation=90,
-    textinfo='percent',
+    rotation=-60,
+    textinfo='value+percent',
     hovertemplate='<b>%{label}</b>: %{value}<extra></extra>'
 )
 
@@ -718,7 +749,7 @@ support_pie = px.pie(
         color='black'
     )
 ).update_traces(
-    rotation=0,
+    rotation=30,
     textinfo='value+percent',
     hovertemplate='<b>%{label}</b>: %{value}<extra></extra>'
 )
@@ -891,7 +922,7 @@ person_pie=px.pie(
         color='black'
     )
 ).update_traces(
-    rotation=0,
+    rotation=80,
     textinfo='value+percent',
     hovertemplate='<b>%{label} Status</b>: %{value}<extra></extra>',
 )
@@ -1218,31 +1249,9 @@ app.layout = html.Div(
 html.Div(
     className='row1',
     children=[
+
         html.Div(
             className='graph11',
-            children=[
-                html.Div(
-                    className='high1',
-                    children=['Total Navigation Hours:']
-                ),
-                html.Div(
-                    className='circle1',
-                    children=[
-                        html.Div(
-                            className='hilite',
-                            children=[
-                                html.H1(
-                                    className='high2',
-                                    children=[df_duration]
-                                ),
-                            ]
-                        ),
-                    ],
-                ),
-            ],
-        ),
-        html.Div(
-            className='graph22',
             children=[
                 html.Div(
                     className='high3',
@@ -1257,6 +1266,29 @@ html.Div(
                                 html.H1(
                                     className='high4',
                                     children=[clients_served]
+                                ),
+                            ]
+                        ),
+                    ],
+                ),
+            ],
+        ),
+        html.Div(
+            className='graph22',
+            children=[
+                html.Div(
+                    className='high1',
+                    children=['Total Navigation Hours:']
+                ),
+                html.Div(
+                    className='circle1',
+                    children=[
+                        html.Div(
+                            className='hilite',
+                            children=[
+                                html.H1(
+                                    className='high2',
+                                    children=[df_duration]
                                 ),
                             ]
                         ),
