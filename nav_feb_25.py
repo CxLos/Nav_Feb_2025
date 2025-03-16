@@ -86,29 +86,30 @@ df = df[df['Date of Activity'].dt.month == 2]
 
 # ================================= Columns Navigation ================================= #
 
-# Column Names: 
-#  ['Timestamp', 
-#   'Date of Activity', 
-#   'Person submitting this form:', 
-#   'Activity Duration (minutes):', 
-#   'Location Encountered:',
-#   "Individual's First Name:", 
-#   "Individual's Date of Birth:", 
-#   "Individual's Insurance Status:", 
-#   "Individual's street address:", 
-#   'City:', 
-#   'ZIP Code:', 
-#   'County:', 
-#   'Type of support given:', 
-#   'Provide brief support description:', "Individual's Status:", 
-#   'HMIS SPID Number:', 
-#   'MAP Card Number', 
-#   'Gender:', 
-#   'Race/Ethnicity:',
-#   'Total travel time (minutes):', 
-#   'Direct Client Assistance Amount:', 
-#   'Column 21', 
-#   "Individual's Last Name:"]
+columns = [
+  'Timestamp', 
+  'Date of Activity', 
+  'Person submitting this form:', 
+  'Activity Duration (minutes):', 
+  'Location Encountered:',
+  "Individual's First Name:", 
+  "Individual's Date of Birth:", 
+  "Individual's Insurance Status:", 
+  "Individual's street address:", 
+  'City:', 
+  'ZIP Code:', 
+  'County:', 
+  'Type of support given:', 
+  'Provide brief support description:', "Individual's Status:", 
+  'HMIS SPID Number:', 
+  'MAP Card Number', 
+  'Gender:', 
+  'Race/Ethnicity:',
+  'Total travel time (minutes):', 
+  'Direct Client Assistance Amount:', 
+  'Column 21', 
+  "Individual's Last Name:"
+  ]
 
 # =============================== Missing Values ============================= #
 
@@ -159,6 +160,41 @@ clients_served = str(clients_served)
 df_duration = df['Activity Duration (minutes):'].sum()/60
 df_duration = round(df_duration) 
 # # print('Activity Duration:', df_duration/60, 'hours')
+
+# ------------------------------ Travel Time ---------------------------- #
+
+# 0     124
+# 60      3
+# 30      3
+# 45      1
+
+# print('Travel time unique values:', df['Total travel time (minutes):'].unique())
+# print(df['Total travel time (minutes):'].value_counts())
+
+df['Total travel time (minutes):'] = (
+    df['Total travel time (minutes):']
+    .astype(str)
+    .str.strip()
+    .replace(
+        {
+        'The Bumgalows': '0',
+        }
+    )
+)
+
+# Convert to float
+df['Total travel time (minutes):'] = pd.to_numeric(df['Total travel time (minutes):'], errors='coerce')
+
+# print('Value counts after:', df['Total travel time (minutes):'].value_counts())
+
+# replace nan with '0'
+df['Total travel time (minutes):'] = df['Total travel time (minutes):'].fillna(0)
+
+# # Groupby Activity Duration:
+travel_time = df['Total travel time (minutes):'].sum()/60
+travel_time = round(travel_time) 
+# print('Travel Time dtype:', df['Total travel time (minutes):'].dtype)
+# print('Total Travel Time:', travel_time)
 
 # ------------------------------- Gender Distribution ---------------------------- #
 
@@ -592,7 +628,7 @@ df_location = df['Location Encountered:'].value_counts().reset_index(name='Count
 # # print(df['Location Encountered:'].value_counts())
 
 # unique values
-print("Locations Encountered",df['Location Encountered:'].unique())
+# print("Locations Encountered",df['Location Encountered:'].unique())
 
 # Location Bar Chart
 location_bar=px.bar(
@@ -1299,6 +1335,60 @@ html.Div(
     ]
 ),
 
+# # ROW 1
+html.Div(
+    className='row1',
+    children=[
+
+        html.Div(
+            className='graph11',
+            children=[
+                html.Div(
+                    className='high3',
+                    children=['Travel Hours']
+                ),
+                html.Div(
+                    className='circle2',
+                    children=[
+                        html.Div(
+                            className='hilite',
+                            children=[
+                                html.H1(
+                                    className='high5',
+                                    children=[travel_time]
+                                ),
+                            ]
+                        ),
+                    ],
+                ),
+            ],
+        ),
+        html.Div(
+            className='graph22',
+            children=[
+                html.Div(
+                    className='high1',
+                    children=['Placeholder']
+                ),
+                html.Div(
+                    className='circle1',
+                    children=[
+                        html.Div(
+                            className='hilite',
+                            children=[
+                                html.H1(
+                                    className='high2',
+                                    children=[]
+                                ),
+                            ]
+                        ),
+                    ],
+                ),
+            ],
+        ),
+    ]
+),
+
 # # ROW 3
 html.Div(
     className='row2',
@@ -1534,7 +1624,7 @@ if __name__ == '__main__':
                 
 # ----------------------------------------------- Updated Database ----------------------------------------
 
-# updated_path = 'data/Navigation_Responses_Jan_2025_cleaned.xlsx'
+# updated_path = 'data/nav__feb_2025.xlsx'
 # data_path = os.path.join(script_dir, updated_path)
 # df.to_excel(data_path, index=False)
 # print(f"DataFrame saved to {data_path}")
